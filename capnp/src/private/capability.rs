@@ -94,6 +94,9 @@ impl Clone for Box<dyn ClientHook> {
 pub trait ResultsHook {
     fn get(&mut self) -> crate::Result<any_pointer::Builder<'_>>;
     fn allow_cancellation(&self);
+
+    fn on_tail_call(&mut self) -> Promise<any_pointer::Pipeline, crate::Error>;
+
     fn tail_call(self: Box<Self>, request: Box<dyn RequestHook>) -> Promise<(), crate::Error>;
     fn direct_tail_call(
         self: Box<Self>,

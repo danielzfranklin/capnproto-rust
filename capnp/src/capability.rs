@@ -239,6 +239,12 @@ where
     pub fn set(&mut self, other: T::Reader<'_>) -> crate::Result<()> {
         self.hook.get().unwrap().set_as(other)
     }
+
+    pub fn tail_call<SubParams>(self, tail_request: Request<SubParams, T>)
+                                -> Promise<(), Error>
+    {
+        self.hook.tail_call(tail_request.hook)
+    }
 }
 
 pub trait FromTypelessPipeline {
