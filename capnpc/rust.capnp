@@ -43,3 +43,8 @@ annotation getOption @0xabfef22c4ee1964e (field) :Void;
 #     assert_eq!(struct_without.get_field(), None));
 #
 # The setters are unchanged to match the Rust convention.
+
+annotation internal @0xedd5eeecba647642 (file) :Void;
+# Not part of public API. Indicates that the generated code is available under
+# the capnp_root
+$internal;

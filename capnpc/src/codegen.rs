@@ -487,9 +487,11 @@ fn module_name(camel_case: &str) -> String {
 }
 
 // Annotation IDs, as defined in rust.capnp.
-const NAME_ANNOTATION_ID: u64 = 0xc2fe4c6d100166d0;
-const PARENT_MODULE_ANNOTATION_ID: u64 = 0xabee386cd1450364;
-const GET_OPTION_ANNOTATION_ID: u64 = 0xabfef22c4ee1964e;
+const NAME_ANNOTATION_ID: u64 = capnp::rust_capnp::name::ID;
+const PARENT_MODULE_ANNOTATION_ID: u64 = capnp::rust_capnp::parent_module::ID;
+const VALUE_ANNOTATION_ID: u64 = capnp::rust_capnp::value::ID;
+const INTERNAL_ANNOTATION_ID: u64 = capnp::rust_capnp::internal::ID;
+const GET_OPTION_ANNOTATION_ID: u64 = capnp::rust_capnp::get_option::ID;
 
 fn name_annotation_value(annotation: schema_capnp::annotation::Reader) -> capnp::Result<&str> {
     if let schema_capnp::value::Text(t) = annotation.get_value()?.which()? {

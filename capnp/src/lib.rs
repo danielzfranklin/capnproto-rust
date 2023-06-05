@@ -36,6 +36,9 @@ extern crate alloc;
 /// [schema.capnp](https://github.com/capnproto/capnproto/blob/master/c%2B%2B/src/capnp/schema.capnp).
 pub mod schema_capnp;
 
+/// Code generated from [rust.capnp](https://github.com/capnproto/capnproto-rust/blob/master/capnpc/rust.capnp)
+pub mod rust_capnp;
+
 pub mod any_pointer;
 pub mod any_pointer_list;
 pub mod capability;
