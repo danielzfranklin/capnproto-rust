@@ -26,6 +26,8 @@ using Rust = import "/rust.capnp";
 using Json = import "/capnp/compat/json.capnp";
 
 struct SimpleUnnamedUnion {
+  common @2 :Text;
+
   union {
     unset @0 :Void;
     variant @1 :UInt8;
@@ -48,6 +50,8 @@ struct SimpleList {
 
 struct SimpleStruct {
   field @0 :UInt8;
+  textField @1 :Text;
+  dataField @2 :Data $Json.hex;
 }
 
 struct SimpleNestedStruct {
@@ -208,7 +212,7 @@ struct TestAllTypes {
   float32Field   @10 : Float32;
   float64Field   @11 : Float64;
   textField      @12 : Text;
-  dataField      @13 : Data;
+  dataField      @13 : Data $Json.base64;
   structField    @14 : TestAllTypes;
   enumField      @15 : TestEnum;
   interfaceField @16 : EmptyInterface;
@@ -226,7 +230,7 @@ struct TestAllTypes {
   float32List   @27 : List(Float32);
   float64List   @28 : List(Float64);
   textList      @29 : List(Text);
-  dataList      @30 : List(Data);
+  dataList      @30 : List(Data) $Json.hex;
   structList    @31 : List(TestAllTypes);
   enumList      @32 : List(TestEnum);
   interfaceList @33 : List(EmptyInterface);

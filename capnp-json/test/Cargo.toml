@@ -1,0 +1,17 @@
+[package]
+name = "capnp-json-test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+assert-json-diff = "2.0.2"
+capnp = { path = "../../capnp" }
+pretty_assertions = "1.3.0"
+serde_json = "1.0.96"
+capnp-json = { path = "../" }
+capnp-test-util = { path = "../../test-util" }
+
+[build-dependencies]
+capnpc = { path = "../../capnpc" }

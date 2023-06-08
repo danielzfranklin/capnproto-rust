@@ -1,0 +1,13 @@
+[package]
+name = "capnp-json"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+capnp = { path = "../capnp" }
+capnp-test-util = { path = "../test-util" }
+base64 = "0.21.2"
+serde_json = "1.0.96"
+hex = "0.4.3"

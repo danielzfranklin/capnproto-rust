@@ -14,6 +14,7 @@ members = [
     "capnpc",
     "capnp-futures",
     "capnp-rpc",
+    "capnp-json",
 
     # testing and examples
     "test-util",
@@ -29,6 +30,7 @@ members = [
     "capnp-rpc/examples/calculator",
     "capnp-rpc/examples/pubsub",
     "capnp-rpc/test",
+    "capnp-json/test",
     "example/addressbook",
     "example/addressbook_send",
     "example/fill_random_values",
