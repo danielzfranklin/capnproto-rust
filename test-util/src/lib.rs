@@ -19,7 +19,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-use crate::test_capnp::{test_all_types, test_defaults, TestEnum};
+// Enable this lint to catch violations in the generated code.
+#![warn(elided_lifetimes_in_paths)]
+#![allow(clippy::bool_assert_comparison)]
+
+pub mod test_capnp {
+    include!(concat!(env!("OUT_DIR"), "/test_capnp.rs"));
+}
+
+pub use crate::test_capnp::{test_all_types, test_defaults, TestEnum};
 
 pub fn init_test_message(mut builder: test_all_types::Builder<'_>) {
     builder.set_void_field(());

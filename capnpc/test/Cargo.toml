@@ -15,6 +15,7 @@ path = "test.rs"
 capnpc = { path = "../" }
 
 [dependencies]
+capnp-test-util = { path = "../../test-util" }
 capnp = { path = "../../capnp" }
 capnpc = { path = "../" }
 external-crate = { path = "./external-crate" }

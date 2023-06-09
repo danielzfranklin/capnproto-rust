@@ -1,6 +1,6 @@
 fn main() {
     capnpc::CompilerCommand::new()
-        .file("test.capnp")
+        .file("test-external.capnp")
         .file("in-submodule.capnp")
         .file("in-other-submodule.capnp")
         .file("schema/test-in-dir.capnp")

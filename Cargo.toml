@@ -16,6 +16,7 @@ members = [
     "capnp-rpc",
 
     # testing and examples
+    "test-util",
     "async-byte-channel",
     "benchmark",
     "capnpc/test",

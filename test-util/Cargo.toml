@@ -1,0 +1,12 @@
+[package]
+name = "capnp-test-util"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+capnp = { path = "../capnp" }
+
+[build-dependencies]
+capnpc = { path = "../capnpc" }

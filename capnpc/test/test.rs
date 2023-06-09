@@ -23,9 +23,8 @@
 #![warn(elided_lifetimes_in_paths)]
 #![allow(clippy::bool_assert_comparison)]
 
-pub mod test_capnp {
-    include!(concat!(env!("OUT_DIR"), "/test_capnp.rs"));
-}
+pub use capnp_test_util as test_util;
+pub use test_util::test_capnp;
 
 pub mod foo {
     pub mod bar {
@@ -78,8 +77,9 @@ pub mod test_output_path_capnp {
     ));
 }
 
-#[cfg(test)]
-mod test_util;
+pub mod test_external {
+    include!(concat!(env!("OUT_DIR"), "/test_external_capnp.rs"));
+}
 
 #[cfg(test)]
 mod dynamic;

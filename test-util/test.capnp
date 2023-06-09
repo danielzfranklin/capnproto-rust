@@ -22,20 +22,82 @@
 
 @0x99d187209d25cee7;
 
-using Rust = import "rust.capnp";
-using External = import "./external-crate/external.capnp";
+using Rust = import "/rust.capnp";
+using Json = import "/capnp/compat/json.capnp";
 
-$Rust.imports([
-  (path = "./external-crate/external.capnp", crate = "external_crate")
-]);
-
-# The test case is that this builds. This ensure we're able to refer to a struct
-# (external_capnp::opts) in the generated code.
-struct UseExternalAnnotation $External.annot(field = "foo") {
-  field @0 :Text;
+struct SimpleUnnamedUnion {
+  union {
+    unset @0 :Void;
+    variant @1 :UInt8;
+  }
 }
 
-struct FieldSubsetIndexesCorrectly{
+struct SimpleNamedUnion {
+  common @3 :Text;
+
+  value :union {
+    unset @0 :Void;
+    variant @1 :UInt8;
+    otherVariant @2 :UInt8;
+  }
+}
+
+struct SimpleList {
+  field @0 :List(SimpleStruct);
+}
+
+struct SimpleStruct {
+  field @0 :UInt8;
+}
+
+struct SimpleNestedStruct {
+  field @0 :Inner;
+
+  struct Inner {
+    nested @0 :Bool;
+  }
+}
+
+struct JsonData {
+  hex @0 :Data $Json.hex;
+  base64 @1 :Data $Json.base64;
+  hexList @2 :List(Data) $Json.hex;
+}
+
+struct JsonRename {
+  group :group $Json.name("renamed-group") {
+    field @0 :Enum $Json.name("renamed-field");
+  }
+
+  aUnion :union $Json.name("renamed-union") {
+    unset @1 :Void;
+    set @2 :UInt8;
+  }
+
+  enum Enum {
+    unset @0;
+    set @1 $Json.name("renamed-enumerant");
+  }
+}
+
+struct UnrecognizedEnum {
+  field @0 :SubsetEnum;
+}
+
+struct RecognizedEnum {
+  field @0 :SupersetEnum;
+}
+
+enum SubsetEnum {
+  shared @0;
+}
+
+enum SupersetEnum {
+  shared @0;
+  unique @1;
+}
+
+struct FieldSubsetIndexesCorrectly {
   common @2 :Text;
 
   union {
