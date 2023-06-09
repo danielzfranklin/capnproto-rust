@@ -253,6 +253,10 @@ impl EnumSchema {
         Self { raw, proto }
     }
 
+    pub fn display_name(&self) -> Result<&str> {
+        self.proto.get_display_name()
+    }
+
     pub fn get_proto(self) -> node::Reader<'static> {
         self.proto
     }
