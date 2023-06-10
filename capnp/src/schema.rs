@@ -120,6 +120,14 @@ impl From<RawBrandedStructSchema> for StructSchema {
     }
 }
 
+impl PartialEq for StructSchema {
+    fn eq(&self, other: &StructSchema) -> bool {
+        self.raw == other.raw
+    }
+}
+
+impl Eq for StructSchema {}
+
 /// A field of a struct, with generics applied.
 #[derive(Clone, Copy)]
 pub struct Field {
@@ -149,6 +157,14 @@ impl Field {
         })
     }
 }
+
+impl PartialEq for Field {
+    fn eq(&self, other: &Self) -> bool {
+        self.parent == other.parent && self.index == other.index
+    }
+}
+
+impl Eq for Field {}
 
 /// A list of fields of a struct, with generics applied.
 #[derive(Clone, Copy)]
