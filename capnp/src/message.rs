@@ -326,6 +326,22 @@ where
     }
 }
 
+impl<S, T> std::fmt::Debug for TypedReader<S, T>
+where
+    S: ReaderSegments,
+    T: Owned,
+    for<'a> T::Reader<'a>: std::fmt::Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let mut f = f.debug_struct("TypedBuilder");
+        if let Ok(root) = self.get() {
+            f.field("message", &root).finish()
+        } else {
+            f.finish_non_exhaustive()
+        }
+    }
+}
+
 impl<S, T> From<Reader<S>> for TypedReader<S, T>
 where
     S: ReaderSegments,
@@ -556,6 +572,15 @@ where
     }
 }
 
+impl<T> Default for TypedBuilder<T, HeapAllocator>
+where
+    T: Owned,
+{
+    fn default() -> Self {
+        Self::new_default()
+    }
+}
+
 impl<T, A> TypedBuilder<T, A>
 where
     T: Owned,
@@ -602,6 +627,22 @@ where
 
     pub fn into_reader(self) -> TypedReader<Builder<A>, T> {
         TypedReader::new(self.message.into_reader())
+    }
+}
+
+impl<T, A> std::fmt::Debug for TypedBuilder<T, A>
+where
+    T: Owned,
+    A: Allocator,
+    for<'a> T::Reader<'a>: std::fmt::Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let mut f = f.debug_struct("TypedBuilder");
+        if let Ok(root) = self.get_root_as_reader() {
+            f.field("message", &root).finish()
+        } else {
+            f.finish_non_exhaustive()
+        }
     }
 }
 
