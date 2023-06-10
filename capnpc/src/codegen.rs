@@ -1292,7 +1292,7 @@ fn used_params_of_brand(
     Ok(())
 }
 
-// return (the 'Which' enum, the 'which()' accessor, typedef, default_decls)
+// return (the 'Which' enum, the 'discriminant() accessor, the 'which()' accessor, typedef, default_decls)
 fn generate_union(
     ctx: &GeneratorContext,
     discriminant_offset: u32,
@@ -1300,6 +1300,7 @@ fn generate_union(
     is_reader: bool,
     params: &TypeParameterTexts,
 ) -> ::capnp::Result<(
+    FormattedText,
     FormattedText,
     FormattedText,
     FormattedText,
@@ -1429,15 +1430,22 @@ fn generate_union(
         }
     ));
 
+    let discriminant_result = Branch(vec![
+        Line("#[inline]".to_string()),
+        Line("pub fn discriminant(&self) -> u16 {".to_string()),
+        Indent(Box::new(Line(format!(
+            "self.{field_name}.get_data_field::<u16>({doffset})"
+        )))),
+        Line("}".to_string()),
+    ]);
+
     let getter_result = Branch(vec![
         Line("#[inline]".to_string()),
         Line(fmt!(ctx,
             "pub fn which(self) -> ::core::result::Result<{concrete_type}, {capnp}::NotInSchema> {{"
         )),
         Indent(Box::new(Branch(vec![
-            Line(format!(
-                "match self.{field_name}.get_data_field::<u16>({doffset}) {{"
-            )),
+            Line("match self.discriminant() {".to_string()),
             Indent(Box::new(Branch(getter_interior))),
             Line("}".to_string()),
         ]))),
@@ -1446,7 +1454,13 @@ fn generate_union(
 
     // TODO set_which() for builders?
 
-    Ok((result, getter_result, typedef, default_decls))
+    Ok((
+        result,
+        discriminant_result,
+        getter_result,
+        typedef,
+        default_decls,
+    ))
 }
 
 fn generate_haser(
@@ -2020,18 +2034,20 @@ fn generate_node(
             }
 
             if discriminant_count > 0 {
-                let (which_enums1, union_getter, typedef, mut default_decls) =
+                let (which_enums1, discrim_getter, union_getter, typedef, mut default_decls) =
                     generate_union(ctx, discriminant_offset, &union_fields, true, &params)?;
                 which_enums.push(which_enums1);
                 which_enums.push(typedef);
+                reader_members.push(discrim_getter);
                 reader_members.push(union_getter);
 
                 private_mod_interior.append(&mut default_decls);
 
-                let (_, union_getter, typedef, _) =
+                let (_, discrim_getter, union_getter, typedef, _) =
                     generate_union(ctx, discriminant_offset, &union_fields, false, &params)?;
                 which_enums.push(typedef);
                 builder_members.push(union_getter);
+                builder_members.push(discrim_getter);
 
                 let mut reexports = String::new();
                 reexports.push_str("pub use self::Which::{");
