@@ -2020,6 +2020,20 @@ fn generate_node(
                 let discriminant_value = field.get_discriminant_value();
                 let is_union_field = discriminant_value != field::NO_DISCRIMINANT;
 
+                if let field::Slot(reg_field) = field.which()? {
+                    if reg_field.get_type()?.is_pointer()? {
+                        builder_members.push(Branch(vec![
+                            Line("#[inline]".into()),
+                            Line(format!("pub fn clear_{styled_name}(&mut self) {{")),
+                            Indent(Box::new(Line(format!(
+                                "self.builder.reborrow().get_pointer_field_mut({}).clear()",
+                                reg_field.get_offset()
+                            )))),
+                            Line("}".into()),
+                        ]));
+                    }
+                }
+
                 if !is_union_field {
                     pipeline_impl_interior.push(generate_pipeline_getter(ctx, field)?);
                     let (ty, get, default_decl) = getter_text(ctx, &field, true, true)?;
