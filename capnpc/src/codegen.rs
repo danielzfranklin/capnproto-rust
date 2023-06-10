@@ -2329,7 +2329,12 @@ fn generate_node(
                         BlankLine,
                         Line(fmt!(ctx,"pub fn total_size(&self) -> {capnp}::Result<{capnp}::MessageSize> {{")),
                         Indent(Box::new(Line("self.builder.as_reader().total_size()".to_string()))),
-                        Line("}".to_string())
+                        Line("}".to_string()),
+
+                        BlankLine,
+                        Line(fmt!(ctx, "pub fn copy_from(&mut self, reader: &Reader<'_,{0}>) -> {capnp}::Result<()> {{", params.params)),
+                        Indent(Box::new(Line("self.builder.copy_content_from(&reader.reader)".into()))),
+                        Line("}".into()),
                         ]))),
                 Indent(Box::new(Branch(builder_members))),
                 Line("}".to_string()),
