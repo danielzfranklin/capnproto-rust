@@ -533,6 +533,10 @@ where
     pub fn into_allocator(self) -> A {
         self.arena.into_allocator()
     }
+
+    pub fn has_root(&self) -> bool {
+        !self.arena.is_empty()
+    }
 }
 
 impl<A> ReaderSegments for Builder<A>
@@ -611,6 +615,10 @@ where
 
     pub fn set_root(&mut self, value: T::Reader<'_>) -> Result<()> {
         self.message.set_root(value)
+    }
+
+    pub fn has_root(&self) -> bool {
+        self.message.has_root()
     }
 
     pub fn into_inner(self) -> Builder<A> {
