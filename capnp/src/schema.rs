@@ -176,6 +176,14 @@ impl Field {
             get_annotation_type: self.parent.raw.annotation_types,
         })
     }
+
+    /// Indicates where this member appeared in the code, relative to other members.
+    /// Code ordering may have semantic relevance -- programmers tend to place related fields
+    /// together.  So, using code ordering makes sense in human-readable formats where ordering is
+    /// otherwise irrelevant, like JSON.
+    pub fn code_order(&self) -> u16 {
+        self.proto.get_code_order()
+    }
 }
 
 impl PartialEq for Field {
