@@ -153,6 +153,10 @@ pub struct Field {
 }
 
 impl Field {
+    pub fn name(&self) -> Result<&'static str> {
+        self.proto.get_name()
+    }
+
     pub fn get_proto(self) -> field::Reader<'static> {
         self.proto
     }
