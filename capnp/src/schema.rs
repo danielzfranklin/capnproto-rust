@@ -28,8 +28,20 @@ impl StructSchema {
         Self { raw, proto }
     }
 
+    /// Name to present to humans to identify this Node.  You should not attempt to parse this.  Its
+    /// format could change.  It is not guaranteed to be unique.
+    ///
+    /// (On Zooko's triangle, this is the node's nickname.)
     pub fn display_name(&self) -> Result<&str> {
         self.proto.get_display_name()
+    }
+
+    /// If you want a shorter version of `displayName` (just naming this node,
+    /// without its surrounding scope)
+    pub fn name(&self) -> Result<&str> {
+        let display = self.display_name()?;
+        let prefix = self.proto.get_display_name_prefix_length() as usize;
+        Ok(&display[prefix..])
     }
 
     pub fn get_proto(&self) -> node::Reader<'static> {
