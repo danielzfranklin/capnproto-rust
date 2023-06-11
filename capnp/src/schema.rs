@@ -81,6 +81,10 @@ impl StructSchema {
         }
     }
 
+    pub fn has_union_fields(&self) -> bool {
+        !self.raw.generic.members_by_discriminant.is_empty()
+    }
+
     pub fn get_union_fields(self) -> Result<FieldSubset> {
         if let node::Struct(s) = self.proto.which()? {
             Ok(FieldSubset {
