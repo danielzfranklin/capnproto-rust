@@ -1092,24 +1092,73 @@ fn generate_setter(
                     initter_interior.push(
                         Line(fmt!(ctx,"{capnp}::traits::FromPointerBuilder::init_pointer(self.builder.get_pointer_field({offset}), size)")));
 
-                    match ot1.get_element_type()?.which()? {
+                    let elem_ty = ot1.get_element_type()?;
+
+                    let (reader_type, builder_type) = match elem_ty.which()? {
                         type_::List(_) => (
-                            Some(reg_field.get_type()?.type_string(ctx, Leaf::Reader("'_"))?),
-                            Some(
-                                reg_field
-                                    .get_type()?
-                                    .type_string(ctx, Leaf::Builder("'a"))?,
-                            ),
+                            reg_field.get_type()?.type_string(ctx, Leaf::Reader("'_"))?,
+                            reg_field
+                                .get_type()?
+                                .type_string(ctx, Leaf::Builder("'a"))?,
                         ),
                         _ => (
-                            Some(reg_field.get_type()?.type_string(ctx, Leaf::Reader("'a"))?),
-                            Some(
-                                reg_field
-                                    .get_type()?
-                                    .type_string(ctx, Leaf::Builder("'a"))?,
-                            ),
+                            reg_field.get_type()?.type_string(ctx, Leaf::Reader("'a"))?,
+                            reg_field
+                                .get_type()?
+                                .type_string(ctx, Leaf::Builder("'a"))?,
                         ),
+                    };
+
+                    // Generate init to
+                    if !matches!(elem_ty.which()?, type_::Interface(_)) {
+                        // NOTE: Supporting interfaces would complicate the
+                        // codegen because we'd need to use different Leafs. I
+                        // (daniel) don't think it's worth it.
+                        //
+                        // The reason init_to takes a slice rather than a genric
+                        // iterator is that it wouldn't compile. See
+                        // <https://github.com/rust-lang/rust/issues/49601>
+
+                        // TODO: Caveats file:///home/daniel/projects/capnproto-rust/target/doc/capnp/struct_list/struct.Builder.html
+                        // TODO: Set fallibility
+
+                        let elem_reader = elem_ty.type_string(ctx, Leaf::Reader("'init"))?;
+
+                        result.push(line("#[inline]"));
+                        result.push(line(fmt!(ctx,
+                            "pub fn init_{styled_name}_to<'init>(self, values: &'init [{elem_reader}]) -> {capnp}::Result<{builder_type}> {{"
+                        )));
+                        result.push(indent(vec![
+                            line(format!(
+                                "let mut b = self.init_{styled_name}(values.len() as u32);"
+                            )),
+                            line("for (i, value) in values.iter().enumerate() {"),
+                            indent(line("b.set(i as u32, value)?;")),
+                            line("}"),
+                            line("Ok(b)"),
+                        ]));
+                        result.push(line("}"));
+
+                        // if ot1.get_element_type()?.is_pointer()? {
+                        //     let elem_builder = ot1
+                        //         .get_element_type()?
+                        //         .type_string(ctx, Leaf::Reader("'init"))?;
+
+                        //     result.push(line("#[inline]"));
+                        //     result.push(line(fmt!(ctx,
+                        //     "pub fn init_{styled_name}_to_with<T, I, F>(self, values: I, f: F) -> {capnp}::Result<{builder_type}>"
+                        // )));
+                        //     result.push(indent(line(format!(
+                        //     "where I: IntoIterator<Item = T>, for<'init> F: Fn({elem_builder}, T) {{"
+                        // ))));
+                        //     result.push(indent(line(fmt!(ctx,
+                        //     "{capnp}::private::layout::init_list_to_with(self.builder.reborrow().get_pointer_field({offset}), values, f)"
+                        // ))));
+                        //     result.push(line("}"));
+                        // }
                     }
+
+                    (Some(reader_type), Some(builder_type))
                 }
                 type_::Enum(e) => {
                     let id = e.get_type_id();
